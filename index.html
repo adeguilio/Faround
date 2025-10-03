@@ -5,41 +5,97 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MADAFKAZ — Chunsky Movie Night RSVP</title>
 <style>
-  body { margin:0; background:#0b0f1a; color:#e9edf3; font-family:Arial, sans-serif;
-         display:flex; justify-content:center; align-items:center; min-height:100vh; }
-  .card { max-width:700px; background:#1a2433; border-radius:16px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.5); }
-  h1 { margin:0; font-size:2rem; text-transform:uppercase; }
-  .subtitle { font-weight:bold; margin-bottom:6px; }
-  .fine { font-size:.85rem; color:#9aa6b2; margin-bottom:16px; }
-  .rsvp { margin:16px 0; }
-  button { padding:12px 20px; margin-right:10px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
-  .yes { background:#37d27f; color:#052b1a; }
-  .no { background:#ff6b6b; color:#2b0707; }
-  .imgwrap img { max-width:200px; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.25); display:block; margin:auto; }
+  :root{--bg:#0b0f1a;--panel:#0f1b2e;--accent:#ff9b3f;--text:#e9edf3;--muted:#9aa6b2;}
+  *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#0f1b2e,#0b0f1a);color:var(--text);
+  font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;min-height:100dvh;display:grid;place-items:center;padding:24px}
+  .card{width:min(760px,100%);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  .hero{padding:28px 24px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .kicker{letter-spacing:.22em;text-transform:uppercase;color:#ffc46a;font-weight:800;font-size:.82rem}
+  h1{margin:8px 0 4px;font-size:clamp(34px,5.5vw,56px);line-height:1.02;font-weight:900;text-transform:uppercase}
+  .subtitle{margin:0;text-transform:uppercase;font-weight:800;letter-spacing:.08em;color:#ffd8a6;font-size:clamp(14px,2.2vw,18px)}
+  .fine{margin:10px 0 0;color:var(--muted);font-size:12px}
+  .body{padding:18px 24px 22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+  .rsvp{display:flex;gap:12px;flex-wrap:wrap}
+  button{appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+  .yes{background:linear-gradient(180deg,#37d27f,#17a65b);color:#052b1a}
+  .no{background:linear-gradient(180deg,#ff6b6b,#e23e3e);color:#2b0707}
+  .qr{display:grid;gap:6px;justify-items:center}.qr small{color:var(--muted);font-size:10px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;font-size:12px;color:var(--muted)}
+  .brand{text-transform:uppercase;letter-spacing:.14em}
+  .msg{font-size:13px;margin-top:8px}.ok{color:#9ae6b4}.err{color:#ffb4b4}
+  @media (max-width:560px){.body{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>MADAFKAZ</h1>
-    <div class="subtitle">Chunsky Movie Night</div>
-    <div class="subtitle">ONE BATTLE AFTER THE OTHER</div>
-    <div class="fine">Cineplexx Rudnik Ljubljana • 20:15 • Tonight</div>
-
-    <div class="rsvp">
-      <button class="yes">Yes, I’m in</button>
-      <button class="no">No, can’t make it</button>
+  <div class="card" role="group" aria-label="RSVP">
+    <div class="hero">
+      <div class="kicker">MADAFKAZ</div>
+      <h1>CHUNSKY</h1>
+      <p class="subtitle">ONE BATTLE AFTER THE OTHER</p>
+      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • <span id="dateText">Tonight</span></p>
     </div>
 
-    <div class="imgwrap">
-      <!-- Embedded image goes here -->
-      <img src="users/vitjavalencic/downloads/obat.jpg" alt="Coach at desk">
+    <div class="body">
+      <div>
+        <div class="rsvp">
+          <button id="btnYes" class="yes">Yes, I’m in</button>
+          <button id="btnNo"  class="no">No, can’t make it</button>
+        </div>
+        <div id="status" class="msg" aria-live="polite"></div>
+      </div>
+
+      <div class="qr">
+        <img id="qr" alt="QR to this RSVP page" width="140" height="140" decoding="async">
+        <small>Scan to open RSVP</small>
+      </div>
     </div>
 
-    <p style="text-align:center; font-size:0.8rem; margin-top:8px;">
-      <a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">
-        Or click here for RSVP page
-      </a>
-    </p>
+    <div class="foot">
+      <span class="brand">Presented to you by E-Stave</span>
+      <span>Share with friends • See you there 🍿</span>
+    </div>
   </div>
+
+<script>
+  // Optional: add your Formspree endpoint to actually store responses
+  const FORM_ENDPOINT = ""; // e.g. "https://formspree.io/f/xxxxabcd"
+
+  // Date in Ljubljana
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Ljubljana'});
+    document.getElementById('dateText').textContent = fmt.format(new Date());
+  } catch {}
+
+  // Working QR for this live page
+  const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
+  document.getElementById('qr').src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
+
+  const status = document.getElementById('status');
+  const yesBtn = document.getElementById('btnYes');
+  const noBtn  = document.getElementById('btnNo');
+
+  async function send(choice){
+    yesBtn.disabled = noBtn.disabled = true;
+    status.textContent = "Sending your RSVP…";
+    try{
+      if (FORM_ENDPOINT){
+        await fetch(FORM_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+          body: JSON.stringify({response:choice,page:PAGE_URL,stamp:new Date().toISOString()})});
+      } else {
+        await new Promise(r=>setTimeout(r,300)); // simulate success
+      }
+      status.className = "msg ok";
+      status.textContent = (choice==="Yes") ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!";
+    }catch(e){
+      status.className = "msg err";
+      status.textContent = "⚠️ Couldn’t send your RSVP. Please try again.";
+      yesBtn.disabled = noBtn.disabled = false;
+    }
+  }
+  yesBtn.addEventListener('click',()=>send("Yes"));
+  noBtn .addEventListener('click',()=>send("No"));
+</script>
 </body>
 </html>
