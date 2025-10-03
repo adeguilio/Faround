@@ -4,128 +4,42 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MADAFKAZ — Chunsky Movie Night RSVP</title>
-<meta name="description" content="RSVP for Madafakaz Chunsky — One Battle After the Other at Cineplexx Rudnik Ljubljana, 20:15.">
 <style>
-  :root{--bg:#0b0f1a;--panel:#0f1b2e;--accent:#ff9b3f;--accent2:#ff5a3c;--text:#e9edf3;--muted:#9aa6b2;}
-  *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1100px 500px at 50% 100%,rgba(255,90,60,.18),transparent 60%),linear-gradient(180deg,#0f1b2e,#0b0f1a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;min-height:100dvh;display:grid;place-items:center;padding:24px}
-  .card{width:min(760px,100%);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
-  .hero{padding:32px 26px 12px;border-bottom:1px solid rgba(255,255,255,.06);background:
-    radial-gradient(800px 200px at 50% -20%, rgba(255,176,46,.28), transparent 60%),
-    radial-gradient(700px 220px at 50% 0%, rgba(255,90,60,.22), transparent 60%)}
-  .kicker{letter-spacing:.22em;text-transform:uppercase;color:#ffc46a;font-weight:800;font-size:.82rem}
-  h1{margin:10px 0 4px;font-size:clamp(34px,5.5vw,56px);line-height:1.02;font-weight:900;text-transform:uppercase;letter-spacing:.02em;background:linear-gradient(180deg,#ffd27a,#ff9b3f 45%,#ff6a4a 80%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 10px 30px rgba(255,90,60,.35)}
-  .subtitle{margin:0;text-transform:uppercase;font-weight:800;letter-spacing:.08em;color:#ffd8a6;font-size:clamp(14px,2.2vw,18px)}
-  .fine{margin:10px 0 0;color:var(--muted);font-size:12px;letter-spacing:.02em}
-  .body{padding:18px 26px 22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
-  .rsvp{display:flex;gap:12px;flex-wrap:wrap}
-  button{appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.25);transition:transform .06s ease,filter .2s ease}
-  .yes{background:linear-gradient(180deg,#37d27f,#17a65b);color:#052b1a}
-  .no{background:linear-gradient(180deg,#ff6b6b,#e23e3e);color:#2b0707}
-  button:active{transform:translateY(1px)}
-  .qr{display:grid;gap:6px;justify-items:center}
-  .qr small{color:var(--muted);font-size:10px}
-  .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;font-size:12px;color:var(--muted)}
-  .brand{text-transform:uppercase;letter-spacing:.14em}
-  .msg{font-size:13px;margin-top:8px}
-  .ok{color:#9ae6b4}.err{color:#ffb4b4}
-  @media (max-width:560px){.body{grid-template-columns:1fr}}
+  body { margin:0; background:#0b0f1a; color:#e9edf3; font-family:Arial, sans-serif;
+         display:flex; justify-content:center; align-items:center; min-height:100vh; }
+  .card { max-width:700px; background:#1a2433; border-radius:16px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.5); }
+  h1 { margin:0; font-size:2rem; text-transform:uppercase; }
+  .subtitle { font-weight:bold; margin-bottom:6px; }
+  .fine { font-size:.85rem; color:#9aa6b2; margin-bottom:16px; }
+  .rsvp { margin:16px 0; }
+  button { padding:12px 20px; margin-right:10px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
+  .yes { background:#37d27f; color:#052b1a; }
+  .no { background:#ff6b6b; color:#2b0707; }
+  .imgwrap img { max-width:200px; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.25); display:block; margin:auto; }
 </style>
 </head>
 <body>
-  <div class="card" role="group" aria-label="RSVP">
-    <div class="hero">
-      <div class="kicker">MADAFKAZ</div>
-      <h1>CHUNSKY MOVIE NIGHT</h1>
-      <p class="subtitle">ONE BATTLE AFTER THE OTHER</p>
-      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • <span id="dateText">Tonight</span></p>
+  <div class="card">
+    <h1>MADAFKAZ</h1>
+    <div class="subtitle">Chunsky Movie Night</div>
+    <div class="subtitle">ONE BATTLE AFTER THE OTHER</div>
+    <div class="fine">Cineplexx Rudnik Ljubljana • 20:15 • Tonight</div>
+
+    <div class="rsvp">
+      <button class="yes">Yes, I’m in</button>
+      <button class="no">No, can’t make it</button>
     </div>
 
-    <div class="body">
-      <div>
-        <div class="rsvp">
-          <button id="btnYes" class="yes">Yes, I’m in</button>
-          <button id="btnNo"  class="no">No, can’t make it</button>
-        </div>
-        <div id="status" class="msg" aria-live="polite"></div>
-      </div>
-
-      <!-- Real QR to your main page (140x140 + white border) -->
-      <div class="qr">
-        <img src="downloads/obato.jpg" alt="Coach at desk" width="180" style="border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.25)">
-        <small><a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">Click here for RSVP page</a></small>
-      </div>
+    <div class="imgwrap">
+      <!-- Embedded image goes here -->
+      <img src="data:image/jpeg;base64,PUT-YOUR-IMAGE-BASE64-HERE" alt="Coach at desk">
     </div>
 
-    <div class="foot">
-      <span class="brand">Presented to you by E-Stave</span>
-      <span>Share with friends • See you there 🍿</span>
-    </div>
+    <p style="text-align:center; font-size:0.8rem; margin-top:8px;">
+      <a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">
+        Or click here for RSVP page
+      </a>
+    </p>
   </div>
-
-<script>
-  // --- Replace with your Formspree endpoint to collect responses ---
-  // Get one at https://formspree.io (New Form → copy endpoint)
-  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok"; // e.g. "https://formspree.io/f/xxxxabcd"
-  // ---------------------------------------------------------------
-
-  // Show precise date (Ljubljana timezone)
-  try {
-    const now = new Date();
-    // Europe/Ljubljana is UTC+2 (Oct 3, 2025 DST). Adjust if needed.
-    const fmt = new Intl.DateTimeFormat('en-GB', { day:'2-digit', month:'short', year:'numeric', timeZone:'Europe/Ljubljana' });
-    document.getElementById('dateText').textContent = fmt.format(now);
-  } catch {}
-
-  // Generate a reliable QR for the live page URL
-  ///const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
-  ///document.getElementById('qr').src =
-    ///"https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" +
-    ///encodeURIComponent(PAGE_URL) + "&margin=4";
-
-  const statusBox = document.getElementById('status');
-  const yesBtn = document.getElementById('btnYes');
-  const noBtn  = document.getElementById('btnNo');
-
-  async function submit(choice){
-    yesBtn.disabled = noBtn.disabled = true;
-    statusBox.className = "msg"; statusBox.textContent = "Sending your RSVP…";
-
-    const payload = {
-      event: "Madafakaz Chunsky — One Battle After the Other",
-      venue: "Cineplexx Rudnik Ljubljana",
-      time: "20:15",
-      dateISO: new Date().toISOString(),
-      response: choice,
-      page: PAGE_URL
-    };
-
-    try {
-      if (FORM_ENDPOINT) {
-        const res = await fetch(FORM_ENDPOINT, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json","Accept":"application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error("Submit failed: " + res.status);
-      } else {
-        // No endpoint yet → simulate success so UX still feels complete
-        await new Promise(r=>setTimeout(r,350));
-      }
-      statusBox.className = "msg ok";
-      statusBox.textContent = (choice==="Yes")
-        ? "✅ Thanks! See you at 20:15 — can’t wait! 🍿"
-        : "👌 All good — maybe next time!";
-    } catch (e){
-      statusBox.className = "msg err";
-      statusBox.textContent = "⚠️ Couldn’t send your RSVP. Please try again.";
-      yesBtn.disabled = noBtn.disabled = false;
-      console.error(e);
-    }
-  }
-
-  yesBtn.addEventListener('click', ()=>submit("Yes"));
-  noBtn .addEventListener('click', ()=>submit("No"));
-</script>
 </body>
 </html>
