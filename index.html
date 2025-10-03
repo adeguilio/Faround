@@ -51,9 +51,9 @@
       </div>
     </div>
 
-    <div class="foot">
-      <span class="brand">Presented to you by E-Stave</span>
-      <span>Share with friends • See you there 🍿</span>
+    <div class="qr">
+      <img src="YOUR_IMAGE_URL_HERE" alt="Coach at desk" width="180" style="border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.25)">
+      <small><a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">Click here for RSVP page</a></small>
     </div>
   </div>
 
@@ -68,9 +68,9 @@
   } catch {}
 
   // Working QR for this live page
-  const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
-  document.getElementById('qr').src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
+  //const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
+  //document.getElementById('qr').src =
+    //"https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
 
   const status = document.getElementById('status');
   const yesBtn = document.getElementById('btnYes');
