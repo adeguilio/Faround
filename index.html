@@ -66,10 +66,10 @@
     document.getElementById('dateText').textContent = fmt.format(new Date());
   } catch {}
 
-  // Working QR for this live page
-  //const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
-  //document.getElementById('qr').src =
-    //"https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
+  Working QR for this live page
+  const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
+  document.getElementById('qr').src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
 
   const status = document.getElementById('status');
   const yesBtn = document.getElementById('btnYes');
