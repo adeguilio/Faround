@@ -57,44 +57,82 @@
   </div>
 
 <script>
-  // Optional: add your Formspree endpoint to actually store responses
-  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok"; // e.g. "https://formspree.io/f/xxxxabcd"
+  // ✅ 1) Set your real Formspree endpoint here
+  // Get it from https://formspree.io (looks like https://formspree.io/f/xxxxabcd)
+  const FORM_ENDPOINT = "https://formspree.io/f/xwprbzyw"; // <-- paste here
 
-  // Date in Ljubljana
-  try {
-    const fmt = new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Ljubljana'});
-    document.getElementById('dateText').textContent = fmt.format(new Date());
-  } catch {}
+  // Optional: turn this on to test without Formspree (should say OK)
+  const TEST_MODE = false; // true = sends to httpbin to prove your browser can POST
 
-  Working QR for this live page
-  const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
-  document.getElementById('qr').src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(PAGE_URL) + "&margin=4";
-
+  // UI refs
   const status = document.getElementById('status');
   const yesBtn = document.getElementById('btnYes');
   const noBtn  = document.getElementById('btnNo');
 
+  // Helper: show messages
+  function show(msg, ok=false){
+    status.className = "msg " + (ok ? "ok" : "err");
+    status.textContent = msg;
+  }
+
   async function send(choice){
     yesBtn.disabled = noBtn.disabled = true;
+    status.className = "msg";
     status.textContent = "Sending your RSVP…";
-    try{
-      if (FORM_ENDPOINT){
-        await fetch(FORM_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
-          body: JSON.stringify({response:choice,page:PAGE_URL,stamp:new Date().toISOString()})});
-      } else {
-        await new Promise(r=>setTimeout(r,300)); // simulate success
+
+    // Build payload
+    const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
+    const payload = {
+      event: "Madafakaz Chunsky — One Battle After the Other",
+      venue: "Cineplexx Rudnik Ljubljana",
+      time: "20:15",
+      stamp: new Date().toISOString(),
+      response: choice,
+      page: PAGE_URL
+    };
+
+    try {
+      const url = TEST_MODE
+        ? "https://httpbin.org/post"            // proves your browser can POST
+        : (FORM_ENDPOINT || "");                // your real endpoint
+
+      if (!url){
+        // No endpoint configured → pretend success so UX still works
+        await new Promise(r=>setTimeout(r,300));
+        show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
+        return;
       }
-      status.className = "msg ok";
-      status.textContent = (choice==="Yes") ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!";
-    }catch(e){
-      status.className = "msg err";
-      status.textContent = "⚠️ Couldn’t send your RSVP. Please try again.";
+
+      const res = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      // Formspree returns 200 or 2xx on success
+      if (!res.ok){
+        // Try to read error details (Formspree includes JSON)
+        let detail = "";
+        try { const j = await res.json(); if (j && j.error) detail = " — " + j.error; } catch {}
+        throw new Error("HTTP " + res.status + detail);
+      }
+
+      show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
+
+    } catch (e){
+      console.error(e);
+      // Common causes with quick hints:
+      // - Wrong FORM_ENDPOINT (typo)
+      // - Domain not allowed in Formspree (add https://adeguilio.github.io)
+      // - Email not verified on Formspree
+      show("⚠️ Couldn't send RSVP. Check endpoint/CORS/verification and try again.");
       yesBtn.disabled = noBtn.disabled = false;
     }
   }
-  yesBtn.addEventListener('click',()=>send("Yes"));
-  noBtn .addEventListener('click',()=>send("No"));
+
+  document.getElementById('btnYes')?.addEventListener('click', ()=>send("Yes"));
+  document.getElementById('btnNo') ?.addEventListener('click', ()=>send("No"));
 </script>
 </body>
 </html>
