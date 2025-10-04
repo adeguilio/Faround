@@ -71,6 +71,16 @@
     gap:16px;
   }
 
+  input[type="text"] {
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    width:100%;
+    font-size:14px;
+    background:#e9edf3;
+    color:#111;
+  }
+
   .rsvp {
     display:flex;
     gap:12px;
@@ -99,7 +109,6 @@
   .ok  { color:#9ae6b4; }
   .err { color:#ffb4b4; }
 
-  /* Coach image sits below buttons, centered, responsive */
   .coach {
     display:block;
     margin:20px auto 0;
@@ -111,7 +120,7 @@
 
   .foot {
     display:flex;
-    justify-content:space-between;
+    justify-content:center;
     align-items:center;
     gap:12px;
     border-top:1px solid rgba(255,255,255,.07);
@@ -123,10 +132,6 @@
   .brand {
     text-transform:uppercase;
     letter-spacing:.14em;
-  }
-
-  @media (max-width:600px){
-    .coach { width:90%; }
   }
 </style>
 </head>
@@ -140,13 +145,16 @@
     </div>
 
     <div class="body">
+      <!-- 👇 New name input field -->
+      <label for="guestName" style="font-size:14px;">Your name:</label>
+      <input type="text" id="guestName" placeholder="Enter your name">
+
       <div class="rsvp">
         <button id="btnYes" class="yes">Yes, I’m in</button>
         <button id="btnNo"  class="no">No, can’t make it</button>
       </div>
       <div id="status" class="msg" aria-live="polite"></div>
 
-      <!-- ✅ Coach image now below buttons -->
       <img src="obato.jpg" alt="Coach at desk" class="coach">
     </div>
 
@@ -168,15 +176,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const status = document.getElementById('status');
   const yesBtn = document.getElementById('btnYes');
   const noBtn  = document.getElementById('btnNo');
+  const nameField = document.getElementById('guestName');
 
   function show(msg, ok=false){ status.className = "msg " + (ok?"ok":"err"); status.textContent = msg; }
 
   async function send(choice){
+    const name = nameField.value.trim();
+    if(!name){
+      show("⚠️ Please enter your name before submitting."); 
+      return;
+    }
+
     yesBtn.disabled = noBtn.disabled = true;
     status.textContent = "Sending your RSVP…";
 
     const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
     const payload = {
+      name,
       event:"Madafakaz Chunsky — One Battle After the Other",
       venue:"Cineplexx Rudnik Ljubljana",
       time:"20:15",
@@ -189,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = TEST_MODE ? "https://httpbin.org/post" : (FORM_ENDPOINT || "");
       if (!url){
         await new Promise(r=>setTimeout(r,250));
-        show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
+        show(`✅ Thanks, ${name}! See you at 20:15!`, true);
         return;
       }
       const res = await fetch(url,{
@@ -198,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
-      show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
+      show(`✅ Thanks, ${name}! See you at 20:15!`, true);
     }catch(err){
       console.error(err);
       show("⚠️ Couldn't send RSVP. Check endpoint/CORS/verification and try again.");
