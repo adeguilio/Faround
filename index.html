@@ -5,26 +5,41 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MADAFKAZ — Chunsky Movie Night RSVP</title>
 <style>
-  :root{--bg:#0b0f1a;--panel:#0f1b2e;--accent:#ff9b3f;--text:#e9edf3;--muted:#9aa6b2;}
-  *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#0f1b2e,#0b0f1a);color:var(--text);
-  font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;min-height:100dvh;display:grid;place-items:center;padding:24px}
-  .card{width:min(760px,100%);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-    border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
-  .hero{padding:28px 24px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
-  .kicker{letter-spacing:.22em;text-transform:uppercase;color:#ffc46a;font-weight:800;font-size:.82rem}
-  h1{margin:8px 0 4px;font-size:clamp(34px,5.5vw,56px);line-height:1.02;font-weight:900;text-transform:uppercase}
-  .subtitle{margin:0;text-transform:uppercase;font-weight:800;letter-spacing:.08em;color:#ffd8a6;font-size:clamp(14px,2.2vw,18px)}
-  .fine{margin:10px 0 0;color:var(--muted);font-size:12px}
-  .body{padding:18px 24px 22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
-  .rsvp{display:flex;gap:12px;flex-wrap:wrap}
-  button{appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.25)}
-  .yes{background:linear-gradient(180deg,#37d27f,#17a65b);color:#052b1a}
-  .no{background:linear-gradient(180deg,#ff6b6b,#e23e3e);color:#2b0707}
-  .qr{display:grid;gap:6px;justify-items:center}.qr small{color:var(--muted);font-size:10px}
-  .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.06);padding:12px 16px;font-size:12px;color:var(--muted)}
-  .brand{text-transform:uppercase;letter-spacing:.14em}
-  .msg{font-size:13px;margin-top:8px}.ok{color:#9ae6b4}.err{color:#ffb4b4}
-  @media (max-width:560px){.body{grid-template-columns:1fr}}
+  /* Background image + readability overlay */
+  body{
+    margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:url("coach.jpg") center/cover no-repeat fixed;
+    position:relative;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:0; /* overlay below content */
+    pointer-events:none;
+  }
+
+  .card{
+    position:relative; z-index:1;
+    width:min(760px,100%); color:#e9edf3;
+    background:rgba(26,36,51,.92); border:1px solid rgba(255,255,255,.08);
+    border-radius:16px; box-shadow:0 12px 36px rgba(0,0,0,.55); overflow:hidden;
+  }
+  .hero{padding:28px 24px 12px; border-bottom:1px solid rgba(255,255,255,.07)}
+  .kicker{letter-spacing:.22em; text-transform:uppercase; color:#ffc46a; font-weight:800; font-size:.82rem}
+  h1{margin:8px 0 4px; font-size:clamp(34px,5.5vw,56px); line-height:1.02; font-weight:900; text-transform:uppercase}
+  .subtitle{margin:0; text-transform:uppercase; font-weight:800; letter-spacing:.08em; color:#ffd8a6; font-size:clamp(14px,2.2vw,18px)}
+  .fine{margin:10px 0 0; color:#9aa6b2; font-size:12px}
+  .body{padding:18px 24px 22px; display:grid; grid-template-columns:1fr; gap:16px}
+  .rsvp{display:flex; gap:12px; flex-wrap:wrap}
+  button{
+    appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:800;
+    text-transform:uppercase; letter-spacing:.08em; font-size:14px; box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .yes{background:linear-gradient(180deg,#37d27f,#17a65b); color:#052b1a}
+  .no{ background:linear-gradient(180deg,#ff6b6b,#e23e3e); color:#2b0707}
+  .msg{font-size:13px} .ok{color:#9ae6b4} .err{color:#ffb4b4}
+  .foot{display:flex; justify-content:space-between; align-items:center; gap:12px;
+        border-top:1px solid rgba(255,255,255,.07); padding:12px 16px; font-size:12px; color:#9aa6b2}
+  .brand{text-transform:uppercase; letter-spacing:.14em}
 </style>
 </head>
 <body>
@@ -33,106 +48,80 @@
       <div class="kicker">MADAFKAZ</div>
       <h1>CHUNSKY</h1>
       <p class="subtitle">ONE BATTLE AFTER THE OTHER</p>
-      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • Saturday, 4 Oct</p>
+      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • <span id="dateText">Tonight</span></p>
     </div>
 
     <div class="body">
-      <div>
-        <div class="rsvp">
-          <button id="btnYes" class="yes">Yes, I’m in</button>
-          <button id="btnNo"  class="no">No, can’t make it</button>
-        </div>
-        <div id="status" class="msg" aria-live="polite"></div>
+      <div class="rsvp">
+        <button id="btnYes" class="yes">Yes, I’m in</button>
+        <button id="btnNo"  class="no">No, can’t make it</button>
       </div>
-      <div class="qr">
-        <img src="obato.jpg" alt="Coach at desk" width="300" style="border-radius:30px; box-shadow:0 4px 18px rgba(0,0,0,.25)">
-        <small><a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">Click here for RSVP page</a></small>
-      </div>
+      <div id="status" class="msg" aria-live="polite"></div>
     </div>
 
     <div class="foot">
       <span class="brand">Presented to you by E-Stave</span>
-      <span>Share with friends • See you there 🍿</span>
+      <a href="https://adeguilio.github.io/Faround/" style="color:#ffd27a; text-decoration:none;">Open RSVP page</a>
     </div>
   </div>
 
-<script>
-  // ✅ 1) Set your real Formspree endpoint here
-  // Get it from https://formspree.io (looks like https://formspree.io/f/xxxxabcd)
-  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok"; // <-- paste here
+<!-- Defer makes sure this runs after HTML loads -->
+<script defer>
+document.addEventListener('DOMContentLoaded', () => {
+  // ------- CONFIG -------
+  const FORM_ENDPOINT = "";   // e.g. "https://formspree.io/f/xxxxabcd"
+  const TEST_MODE = false;    // set true to verify buttons work without Formspree
+  // ----------------------
 
-  // Optional: turn this on to test without Formspree (should say OK)
-  const TEST_MODE = false; // true = sends to httpbin to prove your browser can POST
+  // date text
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Ljubljana'});
+    document.getElementById('dateText').textContent = fmt.format(new Date());
+  } catch {}
 
-  // UI refs
   const status = document.getElementById('status');
   const yesBtn = document.getElementById('btnYes');
   const noBtn  = document.getElementById('btnNo');
 
-  // Helper: show messages
-  function show(msg, ok=false){
-    status.className = "msg " + (ok ? "ok" : "err");
-    status.textContent = msg;
-  }
+  function show(msg, ok=false){ status.className = "msg " + (ok?"ok":"err"); status.textContent = msg; }
 
   async function send(choice){
     yesBtn.disabled = noBtn.disabled = true;
-    status.className = "msg";
-    status.textContent = "Sending your RSVP…";
+    status.className = "msg"; status.textContent = "Sending your RSVP…";
 
-    // Build payload
     const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
     const payload = {
-      event: "Madafakaz Chunsky — One Battle After the Other",
-      venue: "Cineplexx Rudnik Ljubljana",
-      time: "20:15",
-      stamp: new Date().toISOString(),
-      response: choice,
-      page: PAGE_URL
+      event:"Madafakaz Chunsky — One Battle After the Other",
+      venue:"Cineplexx Rudnik Ljubljana",
+      time:"20:15",
+      response:choice, page:PAGE_URL, stamp:new Date().toISOString()
     };
 
-    try {
-      const url = TEST_MODE
-        ? "https://httpbin.org/post"            // proves your browser can POST
-        : (FORM_ENDPOINT || "");                // your real endpoint
-
+    try{
+      const url = TEST_MODE ? "https://httpbin.org/post" : (FORM_ENDPOINT || "");
       if (!url){
-        // No endpoint configured → pretend success so UX still works
-        await new Promise(r=>setTimeout(r,300));
+        // no endpoint configured → simulate success so UX still works
+        await new Promise(r=>setTimeout(r,250));
         show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
         return;
       }
-
-      const res = await fetch(url, {
-        method: "POST",
-        mode: "cors",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      const res = await fetch(url,{
+        method:"POST", mode:"cors",
+        headers:{ "Content-Type":"application/json","Accept":"application/json" },
         body: JSON.stringify(payload)
       });
-
-      // Formspree returns 200 or 2xx on success
-      if (!res.ok){
-        // Try to read error details (Formspree includes JSON)
-        let detail = "";
-        try { const j = await res.json(); if (j && j.error) detail = " — " + j.error; } catch {}
-        throw new Error("HTTP " + res.status + detail);
-      }
-
+      if (!res.ok) throw new Error("HTTP " + res.status);
       show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
-
-    } catch (e){
-      console.error(e);
-      // Common causes with quick hints:
-      // - Wrong FORM_ENDPOINT (typo)
-      // - Domain not allowed in Formspree (add https://adeguilio.github.io)
-      // - Email not verified on Formspree
+    }catch(err){
+      console.error(err);
       show("⚠️ Couldn't send RSVP. Check endpoint/CORS/verification and try again.");
       yesBtn.disabled = noBtn.disabled = false;
     }
   }
 
-  document.getElementById('btnYes')?.addEventListener('click', ()=>send("Yes"));
-  document.getElementById('btnNo') ?.addEventListener('click', ()=>send("No"));
+  yesBtn.addEventListener('click', ()=>send("Yes"));
+  noBtn .addEventListener('click', ()=>send("No"));
+});
 </script>
 </body>
 </html>
