@@ -5,41 +5,128 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MADAFKAZ — Chunsky Movie Night RSVP</title>
 <style>
-  /* Background image + readability overlay */
-  body{
-    margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background:url("obato.jpg") center/cover no-repeat fixed;
-    position:relative;
-  }
-  body::before{
-    content:""; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:0; /* overlay below content */
-    pointer-events:none;
+  body {
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg,#0f1b2e,#0b0f1a); /* blue gradient background */
   }
 
-  .card{
-    position:relative; z-index:1;
-    width:min(760px,100%); color:#e9edf3;
-    background:rgba(26,36,51,.92); border:1px solid rgba(255,255,255,.08);
-    border-radius:16px; box-shadow:0 12px 36px rgba(0,0,0,.55); overflow:hidden;
+  .card {
+    position:relative;
+    width:min(760px,100%);
+    color:#e9edf3;
+    background:rgba(26,36,51,.95);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    box-shadow:0 12px 36px rgba(0,0,0,.55);
+    overflow:hidden;
   }
-  .hero{padding:28px 24px 12px; border-bottom:1px solid rgba(255,255,255,.07)}
-  .kicker{letter-spacing:.22em; text-transform:uppercase; color:#ffc46a; font-weight:800; font-size:.82rem}
-  h1{margin:8px 0 4px; font-size:clamp(34px,5.5vw,56px); line-height:1.02; font-weight:900; text-transform:uppercase}
-  .subtitle{margin:0; text-transform:uppercase; font-weight:800; letter-spacing:.08em; color:#ffd8a6; font-size:clamp(14px,2.2vw,18px)}
-  .fine{margin:10px 0 0; color:#9aa6b2; font-size:12px}
-  .body{padding:18px 24px 22px; display:grid; grid-template-columns:1fr; gap:16px}
-  .rsvp{display:flex; gap:12px; flex-wrap:wrap}
-  button{
-    appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:800;
-    text-transform:uppercase; letter-spacing:.08em; font-size:14px; box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+  .hero {
+    padding:28px 24px 12px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    background:radial-gradient(700px 250px at 50% -10%, rgba(255,176,46,.25), transparent 60%);
   }
-  .yes{background:linear-gradient(180deg,#37d27f,#17a65b); color:#052b1a}
-  .no{ background:linear-gradient(180deg,#ff6b6b,#e23e3e); color:#2b0707}
-  .msg{font-size:13px} .ok{color:#9ae6b4} .err{color:#ffb4b4}
-  .foot{display:flex; justify-content:space-between; align-items:center; gap:12px;
-        border-top:1px solid rgba(255,255,255,.07); padding:12px 16px; font-size:12px; color:#9aa6b2}
-  .brand{text-transform:uppercase; letter-spacing:.14em}
+
+  .kicker {
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:#ffc46a;
+    font-weight:800;
+    font-size:.82rem;
+  }
+
+  h1 {
+    margin:8px 0 4px;
+    font-size:clamp(34px,5.5vw,56px);
+    line-height:1.02;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+
+  .subtitle {
+    margin:0;
+    text-transform:uppercase;
+    font-weight:800;
+    letter-spacing:.08em;
+    color:#ffd8a6;
+    font-size:clamp(14px,2.2vw,18px);
+  }
+
+  .fine {
+    margin:10px 0 0;
+    color:#9aa6b2;
+    font-size:12px;
+  }
+
+  .body {
+    position:relative;
+    padding:18px 24px 22px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .rsvp {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  button {
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:12px 16px;
+    border-radius:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+
+  .yes { background:linear-gradient(180deg,#37d27f,#17a65b); color:#052b1a; }
+  .no  { background:linear-gradient(180deg,#ff6b6b,#e23e3e); color:#2b0707; }
+
+  .msg { font-size:13px; }
+  .ok  { color:#9ae6b4; }
+  .err { color:#ffb4b4; }
+
+  .foot {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    border-top:1px solid rgba(255,255,255,.07);
+    padding:12px 16px;
+    font-size:12px;
+    color:#9aa6b2;
+  }
+
+  .brand {
+    text-transform:uppercase;
+    letter-spacing:.14em;
+  }
+
+  /* small image in bottom-right corner */
+  .coach {
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    width:160px;
+    border-radius:8px;
+    box-shadow:0 4px 18px rgba(0,0,0,.25);
+    opacity:0.9;
+  }
+
+  @media (max-width:600px){
+    .coach{ width:120px; bottom:8px; right:8px; opacity:0.8; }
+  }
 </style>
 </head>
 <body>
@@ -57,6 +144,9 @@
         <button id="btnNo"  class="no">No, can’t make it</button>
       </div>
       <div id="status" class="msg" aria-live="polite"></div>
+
+      <!-- 👇 Coach image inside bottom-right corner -->
+      <img src="obato.jpg" alt="Coach at desk" class="coach">
     </div>
 
     <div class="foot">
@@ -65,15 +155,11 @@
     </div>
   </div>
 
-<!-- Defer makes sure this runs after HTML loads -->
 <script defer>
 document.addEventListener('DOMContentLoaded', () => {
-  // ------- CONFIG -------
-  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok";   // e.g. "https://formspree.io/f/xxxxabcd"
-  const TEST_MODE = false;    // set true to verify buttons work without Formspree
-  // ----------------------
+  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok";   // ← Add your Formspree endpoint here
+  const TEST_MODE = false;    // true = test without sending to Formspree
 
-  // date text
   try {
     const fmt = new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Ljubljana'});
     document.getElementById('dateText').textContent = fmt.format(new Date());
@@ -87,20 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function send(choice){
     yesBtn.disabled = noBtn.disabled = true;
-    status.className = "msg"; status.textContent = "Sending your RSVP…";
+    status.textContent = "Sending your RSVP…";
 
     const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
     const payload = {
       event:"Madafakaz Chunsky — One Battle After the Other",
       venue:"Cineplexx Rudnik Ljubljana",
       time:"20:15",
-      response:choice, page:PAGE_URL, stamp:new Date().toISOString()
+      response:choice,
+      page:PAGE_URL,
+      stamp:new Date().toISOString()
     };
 
     try{
       const url = TEST_MODE ? "https://httpbin.org/post" : (FORM_ENDPOINT || "");
       if (!url){
-        // no endpoint configured → simulate success so UX still works
         await new Promise(r=>setTimeout(r,250));
         show(choice==="Yes" ? "✅ Thanks! See you at 20:15!" : "👌 All good — maybe next time!", true);
         return;
