@@ -12,7 +12,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    background:url("https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=1500&q=80")
+    background:url("sleepyhollow.jpg")
                center/cover no-repeat fixed;
     position:relative;
     color:#e9edf3;
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!url){await new Promise(r=>setTimeout(r,250));show(`✅ Thanks, ${name}! See you on the course!`,true);return;}
       const res=await fetch(url,{method:"POST",mode:"cors",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload)});
       if(!res.ok)throw new Error("HTTP "+res.status);
-      show(`✅ Thanks, ${name}! See you on the course!`,true);
+      show(`✅ Thanks, ${name}! You wil never get invited again!`,true);
     }catch(err){
       console.error(err);
       show("⚠️ Couldn't send RSVP. Check endpoint or try again.");
