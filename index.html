@@ -138,10 +138,10 @@
 <body>
   <div class="card" role="group" aria-label="RSVP">
     <div class="hero">
-      <div class="kicker">Olá tiò</div>
+      <div class="kicker">Holá fellow sensei</div>
       <h1>Saturday movie night</h1>
       <p class="subtitle">ONE BATTLE AFTER THE OTHER</p>
-      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • <span id="dateText">Tonight</span> • Drinks after</p>
+      <p class="fine">Cineplexx Rudnik Ljubljana • 19:50 • <span id="dateText">Tonight</span> • Drinks after</p>
     </div>
 
     <div class="body">
@@ -159,13 +159,13 @@
     </div>
 
     <div class="foot">
-      <span class="brand">Presented to you by E-Stave</span>
+      <span class="brand">Presented to you by Modern Legal</span>
     </div>
   </div>
 
 <script defer>
 document.addEventListener('DOMContentLoaded', () => {
-  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok";   // ← Add your Formspree endpoint here
+  const FORM_ENDPOINT = "https://formspree.io/f/mgvndgld";   // ← Add your Formspree endpoint here
   const TEST_MODE = false;    // true = test without sending to Formspree
 
   try {
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
     const payload = {
       name,
-      event:"Madafakaz Chunsky — One Battle After the Other",
+      event:"Modern Legal — One Battle After the Other",
       venue:"Cineplexx Rudnik Ljubljana",
       time:"20:15",
       response:choice,
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = TEST_MODE ? "https://httpbin.org/post" : (FORM_ENDPOINT || "");
       if (!url){
         await new Promise(r=>setTimeout(r,250));
-        show(`✅ Thanks, ${name}! See you at 20:15!`, true);
+        show(`✅ Thanks, ${name}! See you at 19:50!`, true);
         return;
       }
       const res = await fetch(url,{
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
-      show(`✅ Thanks, ${name}! See you at 20:15!`, true);
+      show(`✅ Thanks, ${name}! You will never be invited again`, true);
     }catch(err){
       console.error(err);
       show("⚠️ Couldn't send RSVP. Check endpoint/CORS/verification and try again.");
