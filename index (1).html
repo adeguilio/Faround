@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Olá tiò — Movie night RSVP</title>
+<style>
+  body {
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg,#0f1b2e,#0b0f1a); /* blue gradient background */
+  }
+
+  .card {
+    position:relative;
+    width:min(760px,100%);
+    color:#e9edf3;
+    background:rgba(26,36,51,.95);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    box-shadow:0 12px 36px rgba(0,0,0,.55);
+    overflow:hidden;
+  }
+
+  .hero {
+    padding:28px 24px 12px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    background:radial-gradient(700px 250px at 50% -10%, rgba(255,176,46,.25), transparent 60%);
+  }
+
+  .kicker {
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:#ffc46a;
+    font-weight:800;
+    font-size:.82rem;
+  }
+
+  h1 {
+    margin:8px 0 4px;
+    font-size:clamp(34px,5.5vw,56px);
+    line-height:1.02;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+
+  .subtitle {
+    margin:0;
+    text-transform:uppercase;
+    font-weight:800;
+    letter-spacing:.08em;
+    color:#ffd8a6;
+    font-size:clamp(14px,2.2vw,18px);
+  }
+
+  .fine {
+    margin:10px 0 0;
+    color:#9aa6b2;
+    font-size:12px;
+  }
+
+  .body {
+    position:relative;
+    padding:18px 24px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  input[type="text"] {
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    width:95%;
+    font-size:14px;
+    background:#e9edf3;
+    color:#111;
+  }
+
+  .rsvp {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  button {
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:12px 16px;
+    border-radius:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    min-width:120px;
+  }
+
+  .yes { background:linear-gradient(180deg,#37d27f,#17a65b); color:#052b1a; }
+  .no  { background:linear-gradient(180deg,#ff6b6b,#e23e3e); color:#2b0707; }
+
+  .msg { font-size:13px; text-align:center; }
+  .ok  { color:#9ae6b4; }
+  .err { color:#ffb4b4; }
+
+  .coach {
+    display:block;
+    margin:20px auto 0;
+    width:80%;
+    max-width:420px;
+    border-radius:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,.25);
+  }
+
+  .foot {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    border-top:1px solid rgba(255,255,255,.07);
+    padding:12px 16px;
+    font-size:12px;
+    color:#9aa6b2;
+  }
+
+  .brand {
+    text-transform:uppercase;
+    letter-spacing:.14em;
+  }
+</style>
+</head>
+<body>
+  <div class="card" role="group" aria-label="RSVP">
+    <div class="hero">
+      <div class="kicker">Olá tiò</div>
+      <h1>Saturday movie night</h1>
+      <p class="subtitle">ONE BATTLE AFTER THE OTHER</p>
+      <p class="fine">Cineplexx Rudnik Ljubljana • 20:15 • <span id="dateText">Tonight</span> • Drinks after</p>
+    </div>
+
+    <div class="body">
+      <!-- 👇 New name input field -->
+      <label for="guestName" style="font-size:14px;">Your name:</label>
+      <input type="text" id="guestName" placeholder="Enter your name">
+
+      <div class="rsvp">
+        <button id="btnYes" class="yes">Si, se puede</button>
+        <button id="btnNo"  class="no">No ("Live free, don't join")</button>
+      </div>
+      <div id="status" class="msg" aria-live="polite"></div>
+
+      <img src="obato.jpg" alt="Coach at desk" class="coach">
+    </div>
+
+    <div class="foot">
+      <span class="brand">Presented to you by E-Stave</span>
+    </div>
+  </div>
+
+<script defer>
+document.addEventListener('DOMContentLoaded', () => {
+  const FORM_ENDPOINT = "https://formspree.io/f/xanpjaok";   // ← Add your Formspree endpoint here
+  const TEST_MODE = false;    // true = test without sending to Formspree
+
+  try {
+    const fmt = new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Ljubljana'});
+    document.getElementById('dateText').textContent = fmt.format(new Date());
+  } catch {}
+
+  const status = document.getElementById('status');
+  const yesBtn = document.getElementById('btnYes');
+  const noBtn  = document.getElementById('btnNo');
+  const nameField = document.getElementById('guestName');
+
+  function show(msg, ok=false){ status.className = "msg " + (ok?"ok":"err"); status.textContent = msg; }
+
+  async function send(choice){
+    const name = nameField.value.trim();
+    if(!name){
+      show("⚠️ Please enter your name before submitting."); 
+      return;
+    }
+
+    yesBtn.disabled = noBtn.disabled = true;
+    status.textContent = "Sending your RSVP…";
+
+    const PAGE_URL = window.location.origin + window.location.pathname.replace(/index\.html?$/,'');
+    const payload = {
+      name,
+      event:"Madafakaz Chunsky — One Battle After the Other",
+      venue:"Cineplexx Rudnik Ljubljana",
+      time:"20:15",
+      response:choice,
+      page:PAGE_URL,
+      stamp:new Date().toISOString()
+    };
+
+    try{
+      const url = TEST_MODE ? "https://httpbin.org/post" : (FORM_ENDPOINT || "");
+      if (!url){
+        await new Promise(r=>setTimeout(r,250));
+        show(`✅ Thanks, ${name}! See you at 20:15!`, true);
+        return;
+      }
+      const res = await fetch(url,{
+        method:"POST", mode:"cors",
+        headers:{ "Content-Type":"application/json","Accept":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      show(`✅ Thanks, ${name}! See you at 20:15!`, true);
+    }catch(err){
+      console.error(err);
+      show("⚠️ Couldn't send RSVP. Check endpoint/CORS/verification and try again.");
+      yesBtn.disabled = noBtn.disabled = false;
+    }
+  }
+
+  yesBtn.addEventListener('click', ()=>send("Yes"));
+  noBtn .addEventListener('click', ()=>send("No"));
+});
+</script>
+</body>
+</html>
